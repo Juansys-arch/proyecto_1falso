@@ -67,4 +67,26 @@ export const movimientoValidation = Joi.object({
     .allow(null,"")
     .optional(),
     
-})
+});
+
+export const solicitudMaterialValidation = Joi.object({
+    materialId: Joi.number()
+    .integer()
+    .required()
+    .messages({
+        "number.base":"El ID del material debe ser un número",
+        "any.required":"El ID del material es requerido"
+    }),
+    cantidad: Joi.number()
+    .integer()
+    .min(1)
+    .required()
+    .messages({
+        "number.base":"La cantidad debe ser un número",
+        "number.min":"La cantidad debe ser mayor o igual a 1",
+        "any.required":"La cantidad es requerida"
+    }),
+    observacion: Joi.string()
+    .allow(null, "")
+    .optional(),
+});
