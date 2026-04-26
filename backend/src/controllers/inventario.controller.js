@@ -1,6 +1,6 @@
 "use strict";
-import {crearMaterialService,obtenerMaterialesService,obtenerMaterialPorIdService,actualizarMaterialService,registrarMovimientoService,obtenerMovimientosService,} from "../services/inventario.service.js";
-import {crearMaterialValidation,actualizarMaterialValidation,movimientoValidation,} from "../validations/inventario.validation.js";
+import {crearMaterialService,obtenerMaterialesService,obtenerMaterialPorIdService,actualizarMaterialService,registrarMovimientoService,obtenerMovimientosService,solicitarMaterialService,} from "../services/inventario.service.js";
+import {crearMaterialValidation,actualizarMaterialValidation,movimientoValidation,solicitudMaterialValidation,} from "../validations/inventario.validation.js";
 import {handleErrorClient,handleErrorServer,handleSuccess,} from "../handlers/responseHandlers.js";
 
 
@@ -95,6 +95,25 @@ export async function obtenerMovimientos(req, res) {
       return handleErrorClient(res, 400, "Error al obtener movimientos", error);
 
     handleSuccess(res, 200, "Movimientos obtenidos exitosamente", movimientos);
+  } catch (error) {
+    handleErrorServer(res, 500, error.message);
+  }
+}
+
+export async function solicitarMaterial(req, res) {
+  try {
+    const { body } = req;
+    const { error } = solicitudMaterialValidation.validate(body);
+
+    if (error)
+      return handleErrorClient(res, 400, "Error de validación", error.message);
+
+    const [solicitud, solicitudError] = await solicitarMaterialService(body, req.user);
+
+    if (solicitudError)
+      return handleErrorClient(res, 400, "Error al solicitar material", solicitudError);
+
+    handleSuccess(res, 201, "Solicitud enviada al administrador", solicitud);
   } catch (error) {
     handleErrorServer(res, 500, error.message);
   }

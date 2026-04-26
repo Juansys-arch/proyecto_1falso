@@ -160,12 +160,12 @@ export async function solicitarMaterialService(data, solicitante) {
 
     if (!material) return [null, "Material no encontrado"];
 
-    const administradores = await userRepository.find({
-      where: { rol: "administrador" },
+    const encargadosInventario = await userRepository.find({
+      where: { rol: "encargado_inventario" },
     });
 
-    if (!administradores.length) {
-      return [null, "No hay administradores disponibles para recibir la solicitud"];
+    if (!encargadosInventario.length) {
+      return [null, "No hay encargados de inventario disponibles para recibir la solicitud"];
     }
 
     const mensaje =
@@ -174,12 +174,12 @@ export async function solicitarMaterialService(data, solicitante) {
       `${data.observacion ? ` Observacion: ${data.observacion}` : ""}`;
 
     await Promise.all(
-      administradores.map((administrador) =>
+      encargadosInventario.map((encargadoInventario) =>
         notificacionRepository.save(
           notificacionRepository.create({
             tipo: "solicitud_material",
             mensaje,
-            administradorId: administrador.id,
+            administradorId: encargadoInventario.id,
             materialId: material.id,
           }),
         ),
